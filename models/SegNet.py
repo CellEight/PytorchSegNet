@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class SegNet(nn.Module):
-    def __init__(self):
+    def __init__(self, n_classes):
         super().__init__() 
         # Encoder Layers
         self.conv1_1 = nn.Conv2d(3,64,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
@@ -20,11 +20,11 @@ class SegNet(nn.Module):
         self.conv6_1 = nn.Conv2d(512,512,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
         self.conv6_2 = nn.Conv2d(512,512,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
         self.conv7_1 = nn.Conv2d(512,512,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
-        self.conv7_2 = nn.Conv2d(256,512,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
+        self.conv7_2 = nn.Conv2d(512,256,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
         self.conv8_1 = nn.Conv2d(256,256,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
-        self.conv8_2 = nn.Conv2d(128,256,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
-        self.conv9_1 = nn.Conv2d(64,128,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
-        self.conv10_1 = nn.Conv2d(3,64,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
+        self.conv8_2 = nn.Conv2d(256,128,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
+        self.conv9_1 = nn.Conv2d(128,64,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
+        self.conv10_1 = nn.Conv2d(64,n_classes,kernel_size=3,stride=1,padding=1,padding_mode='reflect') 
         self.applyPretraining()
 
     def forward(self, x):
