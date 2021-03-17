@@ -2,6 +2,7 @@ import torch
 import torch.optim as optim
 import torch.nn as nn
 from torchvision import transforms
+import numpy as np
 from CamVidDataset import CamVidDataset
 from models.SegNet import SegNet
 
@@ -33,7 +34,7 @@ def train(model, train_dl, test_dl, opt, loss_func, epochs):
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
-        print(f'Epoch: {epoch+1}/{epochs}, Train Loss: {train_loss[epoch]}, Test Loss {test_loss[epoch]}, Accuracy: {100*correct/total}')
+        print(f'Epoch: {epoch+1}/{epochs}, Train Loss: {train_loss[epoch]}, Test Loss {test_loss[epoch]}, Accuracy: {100*correct/(total*768*1024)}')
     return train_loss, test_loss
 
 
