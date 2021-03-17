@@ -1,6 +1,9 @@
 import torch
 import torch.optim as optim
-from CamVid import CamVidDataset
+import torch.nn as nn
+from torchvision import transforms
+from CamVidDataset import CamVidDataset
+from models.SegNet import SegNet
 
 device = torch.device('cuda:0')
 
@@ -13,6 +16,7 @@ def train(model, train_dl, test_dl, opt, loss_func, epochs):
         for xb, yb in train_dl:
             xb, yb = xb.to(device), yb.to(device)
             loss = loss_func(model(xb), yb)
+            print(loss)
             train_loss[epoch] = loss.item()
             loss.backward()
             opt.step()
@@ -36,19 +40,21 @@ def train(model, train_dl, test_dl, opt, loss_func, epochs):
 if __name__ == "__main__":
     # Define Hyperparameters
     lr = 0.001
+    bs = 2 
+    epochs = 10
     # Load Data
-    train_data = CamVidDataset(image_path='./CamVid/train', label_path='./CamVid/train_labels',transform=transform)
-    test_data = CamVidDataset(image_path='./CamVid/val', label_path='./CamVid/vak_labels',transform=transform)
+    train_data = CamVidDataset(image_path='./CamVid/train', label_path='./CamVid/train_labels',transform=transforms.ToTensor())
+    test_data = CamVidDataset(image_path='./CamVid/val', label_path='./CamVid/val_labels',transform=transforms.ToTensor())
     trainloader = torch.utils.data.DataLoader(train_data, batch_size=bs, shuffle=True)
     testloader = torch.utils.data.DataLoader(test_data, batch_size=bs, shuffle=True)
     # Instantiate Model
-    model = SegNet()
+    model = SegNet(32).to(device)
     #Define Optimizer
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
     # Train
-    train(model, trainloader, testloader, optimizer, criterion)
+    train(model, trainloader, testloader, optimizer, criterion,epochs)
     # Save Model to file
-    with f = open('segnet.pkl', 'wb'):
+    with open('segnet.pkl', 'wb') as f:
         pickle.dump(model,f)
         f.close()

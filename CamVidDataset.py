@@ -29,12 +29,11 @@ class CamVidDataset(Dataset):
 
     def toOneHot(self, raw_mask):
         raw_mask = np.array(raw_mask.getdata()).reshape(raw_mask.size[1],raw_mask.size[0],3)
-        mask = torch.zeros(self.col_num, raw_mask.shape[0], raw_mask.shape[1])
+        mask = torch.zeros(raw_mask.shape[0], raw_mask.shape[1],dtype=torch.int64)
         for i in range(raw_mask.shape[0]):
             for j in range(raw_mask.shape[1]):
                 c = self.colour_map[raw_mask[i,j,0]][raw_mask[i,j,1]][raw_mask[i,j,2]]
-                end = time.time()
-                mask[c,i,j] = 1
+                mask[i,j] = c
         return mask
     
     def getColourMap(self):
